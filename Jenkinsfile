@@ -12,8 +12,20 @@ pipeline {
                sh 'npm install -g npm@latest'
                sh 'npm install -g npm@8.12.1'
                sh 'ng build'
-               sh 'mv /var/lib/jenkins/workspace/sam_ang/dist/zappy_boiler_plate/* /var/www/html'
                }
+            }
+        }
+        stage('aws log') {
+            steps {
+              withCredentials([[
+             $class: 'AmazonWebServicesCredentialsBinding',
+             credentialsId: 'AWS_CONFIG',
+             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
+                {
+                    sh 'aws s3 cp /home/ec2-user/Zappyhire/dist/zappy_boiler_plate/ "s3://bucket1234432/" --recursive'
+                    
+                }                  
             }
         }
     }  
